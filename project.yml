@@ -6,7 +6,7 @@ options:
 settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: ro.heygluco.LinxNightscoutBridge
-    DEVELOPMENT_TEAM: YOUR_TEAM_ID
+    DEVELOPMENT_TEAM: 4P45472CX4
     CODE_SIGN_STYLE: Automatic
     SWIFT_VERSION: 5.9
 targets:
