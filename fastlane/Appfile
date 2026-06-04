@@ -1,0 +1,2 @@
+app_identifier("ro.heygluco.LinxNightscoutBridge")
+team_id(ENV["TEAMID"])
