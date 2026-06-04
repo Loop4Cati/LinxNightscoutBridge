@@ -1,0 +1,37 @@
+name: LinxNightscoutBridge
+options:
+  bundleIdPrefix: ro.heygluco
+  deploymentTarget:
+    iOS: '16.0'
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: ro.heygluco.LinxNightscoutBridge
+    DEVELOPMENT_TEAM: YOUR_TEAM_ID
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: 5.9
+targets:
+  LinxNightscoutBridge:
+    type: application
+    platform: iOS
+    sources:
+      - LinxNightscoutBridge
+    info:
+      path: LinxNightscoutBridge/Info.plist
+      properties:
+        CFBundleDisplayName: Linx Nightscout Bridge
+        CFBundleShortVersionString: '1.0'
+        CFBundleVersion: '1'
+        UILaunchScreen: {}
+        NSHealthShareUsageDescription: Această aplicație citește valorile de glicemie din Apple Health pentru a le trimite în Nightscout.
+        BGTaskSchedulerPermittedIdentifiers:
+          - ro.heygluco.LinxNightscoutBridge.sync
+    entitlements:
+      path: LinxNightscoutBridge/LinxNightscoutBridge.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+    settings:
+      base:
+        INFOPLIST_FILE: LinxNightscoutBridge/Info.plist
+        CODE_SIGN_ENTITLEMENTS: LinxNightscoutBridge/LinxNightscoutBridge.entitlements
+        TARGETED_DEVICE_FAMILY: '1'
+        SUPPORTS_MACCATALYST: false
