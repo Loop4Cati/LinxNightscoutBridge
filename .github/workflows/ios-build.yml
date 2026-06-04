@@ -1,4 +1,4 @@
-name: Build iOS App
+name: Build Signed iOS IPA
 
 on:
   workflow_dispatch:
@@ -14,18 +14,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install dependencies
+        run: bundle install
 
-      - name: Generate Xcode project
-        run: xcodegen generate
+      - name: Build signed IPA
+        run: bundle exec fastlane build_bridge
+        env:
+          TEAMID: ${{ secrets.TEAMID }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
-      - name: Build
-        run: |
-          xcodebuild \
-            -project LinxNightscoutBridge.xcodeproj \
-            -scheme LinxNightscoutBridge \
-            -configuration Debug \
-            -destination 'generic/platform=iOS' \
-            CODE_SIGNING_ALLOWED=NO \
-            build
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LinxNightscoutBridge-IPA
+          path: artifacts
