@@ -1,0 +1,51 @@
+default_platform(:ios)
+
+TEAMID = ENV["TEAMID"]
+GH_PAT = ENV["GH_PAT"]
+GITHUB_REPOSITORY_OWNER = ENV["GITHUB_REPOSITORY_OWNER"]
+
+platform :ios do
+  desc "Build Linx Nightscout Bridge IPA"
+  lane :build_bridge do
+    setup_ci if ENV["CI"]
+
+    sh("brew install xcodegen || true")
+    sh("xcodegen generate")
+
+    update_project_team(
+      path: "LinxNightscoutBridge.xcodeproj",
+      teamid: TEAMID
+    )
+
+    match(
+      type: "appstore",
+      git_basic_authorization: Base64.strict_encode64("#{GITHUB_REPOSITORY_OWNER}:#{GH_PAT}"),
+      app_identifier: ["ro.heygluco.LinxNightscoutBridge"]
+    )
+
+    mapping = Actions.lane_context[
+      SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING
+    ]
+
+    update_code_signing_settings(
+      path: "LinxNightscoutBridge.xcodeproj",
+      profile_name: mapping["ro.heygluco.LinxNightscoutBridge"],
+      code_sign_identity: "iPhone Distribution",
+      targets: ["LinxNightscoutBridge"]
+    )
+
+    gym(
+      export_method: "app-store",
+      scheme: "LinxNightscoutBridge",
+      output_name: "LinxNightscoutBridge.ipa",
+      configuration: "Release",
+      destination: "generic/platform=iOS",
+      buildlog_path: "buildlog"
+    )
+
+    copy_artifacts(
+      target_path: "artifacts",
+      artifacts: ["*.ipa", "*.dSYM.zip", "*.mobileprovision"]
+    )
+  end
+end
