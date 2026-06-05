@@ -57,35 +57,35 @@ struct ContentView: View {
     }
 
     private var statusCard: some View {
-        card {
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Status")
-                    .sectionTitle()
+    card {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Status")
+                .sectionTitle()
 
-                VStack(alignment: .leading, spacing: 10) {
-    HStack {
-        Circle()
-            .fill(Color.green)
-            .frame(width: 12, height: 12)
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 12, height: 12)
 
-        Text(syncService.lastMessage ?? "Pregătit pentru sincronizare")
-            .foregroundStyle(.white)
-            .font(.body)
-    }
+                    Text(syncService.lastMessage ?? "Pregătit pentru sincronizare")
+                        .foregroundStyle(.white)
+                        .font(.body)
+                }
 
-    if let lastSyncDate = syncService.lastSyncDate {
-        Text("Ultima sincronizare: \(lastSyncDate.formatted(date: .omitted, time: .shortened))")
-            .foregroundStyle(Color(hex: "A8ADB7"))
-            .font(.footnote)
+                if let lastSyncDate = syncService.lastSyncDate {
+                    Text("Ultima sincronizare: \(lastSyncDate.formatted(date: .omitted, time: .shortened))")
+                        .foregroundStyle(Color(hex: "A8ADB7"))
+                        .font(.footnote)
 
-        Text("Valori trimise la ultimul sync: \(syncService.lastSyncCount)")
-            .foregroundStyle(Color(hex: "A8ADB7"))
-            .font(.footnote)
-    }
-}
+                    Text("Valori trimise la ultimul sync: \(syncService.lastSyncCount)")
+                        .foregroundStyle(Color(hex: "A8ADB7"))
+                        .font(.footnote)
+                }
             }
         }
     }
+}
 
     private var nightscoutCard: some View {
         card {
