@@ -7,11 +7,13 @@ struct ContentView: View {
     @AppStorage("apiSecret") private var apiSecret = ""
     @AppStorage("keepAliveEnabled") private var keepAliveEnabled = false
 
+    private let syncTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+
     var body: some View {
         NavigationStack {
             Form {
                 Section("Nightscout") {
-                    TextField("https://site.herokuapp.com sau domeniul tău", text: $nightscoutURL)
+                    TextField("https://heygluco.ro sau domeniul tău", text: $nightscoutURL)
                         .keyboardType(.URL)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -22,7 +24,7 @@ struct ContentView: View {
                 }
 
                 Section("Permisiuni") {
-                    Button("Permite citirea glicemiei din Health") {
+                    Button("Permite citirea glicemiei") {
                         Task {
                             await syncService.requestHealthPermission()
                         }
@@ -39,7 +41,7 @@ struct ContentView: View {
                             }
                         }
 
-                    Text("Menține aplicația activă în fundal folosind redare audio silențioasă.")
+                    Text("Menține aplicația activă în fundal folosind redare audio silențioasă și sincronizare periodică.")
                         .font(.footnote)
                 }
 
@@ -63,6 +65,14 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Linx → Nightscout")
+            .onReceive(syncTimer) { _ in
+                guard keepAliveEnabled else { return }
+                guard !nightscoutURL.isEmpty, !apiSecret.isEmpty else { return }
+
+                Task {
+                    await syncService.syncLatestGlucose()
+                }
+            }
         }
     }
 }
