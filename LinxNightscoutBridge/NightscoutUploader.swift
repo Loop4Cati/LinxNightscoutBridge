@@ -12,29 +12,42 @@ struct NightscoutEntry: Codable {
 
 final class NightscoutUploader {
     func upload(reading: GlucoseReading, baseURL: String, apiSecret: String) async throws {
+        try await upload(readings: [reading], baseURL: baseURL, apiSecret: apiSecret)
+    }
+
+    func upload(readings: [GlucoseReading], baseURL: String, apiSecret: String) async throws {
+        guard !readings.isEmpty else { return }
+
         guard var components = URLComponents(string: baseURL.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw BridgeError.invalidNightscoutURL
         }
 
         components.path = "/api/v1/entries.json"
-        guard let url = components.url else { throw BridgeError.invalidNightscoutURL }
+        guard let url = components.url else {
+            throw BridgeError.invalidNightscoutURL
+        }
 
-        let entry = NightscoutEntry(
-            type: "sgv",
-            date: Int64(reading.date.timeIntervalSince1970 * 1000),
-            dateString: ISO8601DateFormatter().string(from: reading.date),
-            sgv: Int(reading.valueMgdl.rounded()),
-            direction: "Flat",
-            device: "LinxNightscoutBridge"
-        )
+        let formatter = ISO8601DateFormatter()
+
+        let entries = readings.map { reading in
+            NightscoutEntry(
+                type: "sgv",
+                date: Int64(reading.date.timeIntervalSince1970 * 1000),
+                dateString: formatter.string(from: reading.date),
+                sgv: Int(reading.valueMgdl.rounded()),
+                direction: "Flat",
+                device: "LinxNightscoutBridge"
+            )
+        }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(sha1(apiSecret), forHTTPHeaderField: "api-secret")
-        request.httpBody = try JSONEncoder().encode([entry])
+        request.httpBody = try JSONEncoder().encode(entries)
 
         let (_, response) = try await URLSession.shared.data(for: request)
+
         guard let http = response as? HTTPURLResponse, 200..<300 ~= http.statusCode else {
             throw BridgeError.nightscoutUploadFailed
         }
