@@ -10,7 +10,7 @@ final class SyncService: ObservableObject {
 
     @AppStorage("nightscoutURL") private var nightscoutURL = ""
     @AppStorage("apiSecret") private var apiSecret = ""
-    @AppStorage("lastUploadedHealthKitUUID") private var lastUploadedHealthKitUUID = ""
+    @AppStorage("lastUploadedDate") private var lastUploadedDate: Double = 0
 
     func requestHealthPermission() async {
         do {
@@ -23,21 +23,35 @@ final class SyncService: ObservableObject {
 
     func syncLatestGlucose() async {
         do {
-            guard let reading = try await health.latestBloodGlucose() else {
-                lastMessage = "Nu am găsit valori de glicemie în ultimele 24h."
+            let startDate: Date
+
+            if lastUploadedDate > 0 {
+                startDate = Date(timeIntervalSince1970: lastUploadedDate)
+            } else {
+                startDate = Date().addingTimeInterval(-24 * 60 * 60)
+            }
+
+            let readings = try await health.bloodGlucoseReadings(from: startDate, to: Date())
+
+            guard !readings.isEmpty else {
+                lastMessage = "Nu sunt valori noi de sincronizat."
                 return
             }
 
-            if reading.uuid.uuidString == lastUploadedHealthKitUUID {
-                lastMessage = "Valoarea există deja: \(Int(reading.valueMgdl.rounded())) mg/dL."
-                return
+            try await uploader.upload(readings: readings, baseURL: nightscoutURL, apiSecret: apiSecret)
+
+            if let newest = readings.map(\.date).max() {
+                lastUploadedDate = newest.timeIntervalSince1970
             }
 
-            try await uploader.upload(reading: reading, baseURL: nightscoutURL, apiSecret: apiSecret)
-            lastUploadedHealthKitUUID = reading.uuid.uuidString
-            lastMessage = "Trimis: \(Int(reading.valueMgdl.rounded())) mg/dL."
+            lastMessage = "Sincronizate \(readings.count) valori."
         } catch {
             lastMessage = "Eroare sync: \(error.localizedDescription)"
         }
+    }
+
+    func resetSyncHistory() {
+        lastUploadedDate = 0
+        lastMessage = "Istoricul de sincronizare a fost resetat."
     }
 }
