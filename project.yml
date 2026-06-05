@@ -9,6 +9,7 @@ settings:
     DEVELOPMENT_TEAM: 4P45472CX4
     CODE_SIGN_STYLE: Automatic
     SWIFT_VERSION: 5.9
+    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 targets:
   LinxNightscoutBridge:
     type: application
@@ -23,6 +24,7 @@ targets:
         CFBundleVersion: '1'
         UILaunchScreen: {}
         NSHealthShareUsageDescription: Această aplicație citește valorile de glicemie din Apple Health pentru a le trimite în Nightscout.
+        NSHealthUpdateUsageDescription: Aplicația solicită acces HealthKit pentru integrarea valorilor de glicemie cu Nightscout.
         BGTaskSchedulerPermittedIdentifiers:
           - ro.heygluco.LinxNightscoutBridge.sync
     entitlements:
