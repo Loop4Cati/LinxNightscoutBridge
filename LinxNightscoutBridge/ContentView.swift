@@ -44,11 +44,11 @@ struct ContentView: View {
                 .scaledToFit()
                 .frame(height: 90)
 
-            Text("Linx → Nightscout Bridge")
+            Text("Linx → iOS → Nightscout")
                 .font(.title2.bold())
                 .foregroundStyle(.white)
 
-            Text("Sincronizare simplă între Apple Health și Nightscout")
+            Text("heygluco.ro")
                 .font(.footnote)
                 .foregroundStyle(Color(hex: "A8ADB7"))
                 .multilineTextAlignment(.center)
