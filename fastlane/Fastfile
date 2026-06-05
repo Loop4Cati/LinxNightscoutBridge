@@ -10,10 +10,10 @@ platform :ios do
     setup_ci if ENV["CI"]
 
     sh("brew install xcodegen || true")
-    sh("cd .. && xcodegen generate")
+    sh("xcodegen generate")
 
     update_project_team(
-      path: "../LinxNightscoutBridge.xcodeproj",
+      path: "LinxNightscoutBridge.xcodeproj",
       teamid: TEAMID
     )
 
@@ -28,24 +28,24 @@ platform :ios do
     ]
 
     update_code_signing_settings(
-      path: "../LinxNightscoutBridge.xcodeproj",
+      path: "LinxNightscoutBridge.xcodeproj",
       profile_name: mapping["ro.heygluco.LinxNightscoutBridge"],
       code_sign_identity: "iPhone Distribution",
       targets: ["LinxNightscoutBridge"]
     )
 
     gym(
-      project: "../LinxNightscoutBridge.xcodeproj",
+      project: "LinxNightscoutBridge.xcodeproj",
       export_method: "app-store",
       scheme: "LinxNightscoutBridge",
       output_name: "LinxNightscoutBridge.ipa",
       configuration: "Release",
       destination: "generic/platform=iOS",
-      buildlog_path: "../buildlog"
+      buildlog_path: "buildlog"
     )
 
     copy_artifacts(
-      target_path: "../artifacts",
+      target_path: "artifacts",
       artifacts: ["*.ipa", "*.dSYM.zip", "*.mobileprovision"]
     )
   end
