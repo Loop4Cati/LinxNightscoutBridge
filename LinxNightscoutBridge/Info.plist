@@ -2,5 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>NSHealthShareUsageDescription</key>
+    <string>Aplicația citește valorile de glicemie din Apple Health pentru a le trimite în Nightscout.</string>
+
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>Aplicația solicită acces HealthKit pentru integrarea valorilor de glicemie cu Nightscout.</string>
+
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>ro.heygluco.LinxNightscoutBridge.sync</string>
+    </array>
+
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
 </dict>
 </plist>
