@@ -5,6 +5,7 @@ struct ContentView: View {
 
     @AppStorage("nightscoutURL") private var nightscoutURL = ""
     @AppStorage("apiSecret") private var apiSecret = ""
+    @AppStorage("keepAliveEnabled") private var keepAliveEnabled = false
 
     var body: some View {
         NavigationStack {
@@ -26,6 +27,20 @@ struct ContentView: View {
                             await syncService.requestHealthPermission()
                         }
                     }
+                }
+
+                Section("Keep Alive") {
+                    Toggle("Silent Tune", isOn: $keepAliveEnabled)
+                        .onChange(of: keepAliveEnabled) { _, enabled in
+                            if enabled {
+                                SilentTuneManager.shared.start()
+                            } else {
+                                SilentTuneManager.shared.stop()
+                            }
+                        }
+
+                    Text("Menține aplicația activă în fundal folosind redare audio silențioasă.")
+                        .font(.footnote)
                 }
 
                 Section("Sincronizare") {
