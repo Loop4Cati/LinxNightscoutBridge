@@ -1,3 +1,22 @@
+name: Build Signed iOS IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install dependencies
+        run: bundle install
+
       - name: Check secrets are present
         run: |
           if [ -z "$GH_PAT" ]; then echo "GH_PAT missing"; exit 1; else echo "GH_PAT present"; fi
@@ -23,3 +42,10 @@
           FASTLANE_KEY_ID: ${{ secrets.FASTLANE_KEY_ID }}
           FASTLANE_ISSUER_ID: ${{ secrets.FASTLANE_ISSUER_ID }}
           FASTLANE_KEY: ${{ secrets.FASTLANE_KEY }}
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LinxNightscoutBridge-IPA
+          path: artifacts
