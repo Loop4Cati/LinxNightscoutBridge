@@ -24,7 +24,7 @@ targets:
       properties:
         CFBundleDisplayName: Linx Nightscout Bridge
         CFBundleShortVersionString: '1.0'
-        CFBundleVersion: '3'
+        CFBundleVersion: '4'
         UILaunchScreen: {}
         NSHealthShareUsageDescription: Această aplicație citește valorile de glicemie din Apple Health pentru a le trimite în Nightscout.
         NSHealthUpdateUsageDescription: Aplicația solicită acces HealthKit pentru integrarea valorilor de glicemie cu Nightscout.
