@@ -7,6 +7,10 @@ struct LinxNightscoutBridgeApp: App {
 
     init() {
         BackgroundSync.register()
+
+        if UserDefaults.standard.bool(forKey: "keepAliveEnabled") {
+            SilentTuneManager.shared.start()
+        }
     }
 
     var body: some Scene {
@@ -15,6 +19,10 @@ struct LinxNightscoutBridgeApp: App {
                 .environmentObject(syncService)
                 .onAppear {
                     BackgroundSync.schedule()
+
+                    if UserDefaults.standard.bool(forKey: "keepAliveEnabled") {
+                        SilentTuneManager.shared.start()
+                    }
                 }
         }
     }
