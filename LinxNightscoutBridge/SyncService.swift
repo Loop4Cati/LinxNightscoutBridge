@@ -4,6 +4,8 @@ import SwiftUI
 @MainActor
 final class SyncService: ObservableObject {
     @Published var lastMessage: String?
+    @Published var lastSyncDate: Date?
+    @Published var lastSyncCount: Int = 0
 
     private let health = HealthKitManager()
     private let uploader = NightscoutUploader()
@@ -34,6 +36,8 @@ final class SyncService: ObservableObject {
             let readings = try await health.bloodGlucoseReadings(from: startDate, to: Date())
 
             guard !readings.isEmpty else {
+                lastSyncDate = Date()
+                lastSyncCount = 0
                 lastMessage = "Nu sunt valori noi de sincronizat."
                 return
             }
@@ -44,6 +48,8 @@ final class SyncService: ObservableObject {
                 lastUploadedDate = newest.timeIntervalSince1970
             }
 
+            lastSyncDate = Date()
+            lastSyncCount = readings.count
             lastMessage = "Sincronizate \(readings.count) valori."
         } catch {
             lastMessage = "Eroare sync: \(error.localizedDescription)"
@@ -52,6 +58,8 @@ final class SyncService: ObservableObject {
 
     func resetSyncHistory() {
         lastUploadedDate = 0
+        lastSyncCount = 0
+        lastSyncDate = nil
         lastMessage = "Istoricul de sincronizare a fost resetat."
     }
 }
