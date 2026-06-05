@@ -33,7 +33,7 @@ struct ContentView: View {
 
                 Section("Keep Alive") {
                     Toggle("Silent Tune", isOn: $keepAliveEnabled)
-                        .onChange(of: keepAliveEnabled) { _, enabled in
+                        .onChange(of: keepAliveEnabled) { enabled in
                             if enabled {
                                 SilentTuneManager.shared.start()
                             } else {
