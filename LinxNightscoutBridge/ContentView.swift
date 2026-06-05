@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var syncService: SyncService
+
     @AppStorage("nightscoutURL") private var nightscoutURL = ""
     @AppStorage("apiSecret") private var apiSecret = ""
 
@@ -21,15 +22,24 @@ struct ContentView: View {
 
                 Section("Permisiuni") {
                     Button("Permite citirea glicemiei din Health") {
-                        Task { await syncService.requestHealthPermission() }
+                        Task {
+                            await syncService.requestHealthPermission()
+                        }
                     }
                 }
 
                 Section("Sincronizare") {
-                    Button("Trimite ultima valoare în Nightscout") {
-                        Task { await syncService.syncLatestGlucose() }
+                    Button("Sincronizează valorile noi") {
+                        Task {
+                            await syncService.syncLatestGlucose()
+                        }
                     }
                     .disabled(nightscoutURL.isEmpty || apiSecret.isEmpty)
+
+                    Button("Resetează istoricul sync") {
+                        syncService.resetSyncHistory()
+                    }
+                    .foregroundStyle(.red)
 
                     if let last = syncService.lastMessage {
                         Text(last)
