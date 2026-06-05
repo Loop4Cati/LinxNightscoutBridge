@@ -17,6 +17,16 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
+      - name: Check secrets are present
+        run: |
+          if [ -z "$GH_PAT" ]; then echo "GH_PAT missing"; exit 1; else echo "GH_PAT present"; fi
+          if [ -z "$TEAMID" ]; then echo "TEAMID missing"; exit 1; else echo "TEAMID present"; fi
+          if [ -z "$MATCH_PASSWORD" ]; then echo "MATCH_PASSWORD missing"; exit 1; else echo "MATCH_PASSWORD present"; fi
+        env:
+          TEAMID: ${{ secrets.TEAMID }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
       - name: Build signed IPA
         run: bundle exec fastlane build_bridge
         env:
