@@ -18,6 +18,8 @@ platform :ios do
       teamid: TEAMID
     )
 
+    ENV["MATCH_READONLY"] = "false"
+
     match(
       type: "appstore",
       git_url: "https://github.com/Loop4Cati/Match-Secrets.git",
